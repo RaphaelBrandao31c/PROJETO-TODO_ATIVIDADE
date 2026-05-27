@@ -1,0 +1,13 @@
+GET http://localhost:3333/
+
+###
+POST http://localhost:3333/create-task
+Content-type: application/json
+
+{
+    "description": "Segunda tarefa",
+    "status":0
+}
+
+###
+DELETE http://localhost:3333/delete-task/3
