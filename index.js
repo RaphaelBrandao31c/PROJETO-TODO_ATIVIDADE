@@ -1,54 +1,154 @@
-import express from "express"
-import mysql2 from "mysql2"
-const app = express()
+import express from "express";
+import mysql2 from "mysql2";
 
-app.use(express.json())
+const app = express();
 
-app.get("/", (request, response) =>{
-    response.json({
-        message: "Você acessou a rota principal"
-    })
-})
-
-app.post("/create-task", (request, response) =>{
-    const {description, status } = request.body
-
-    const insertCommand = "INSERT INTO ToDo_RaphaelBrandao(description, status) VALUES (?, ?)" 
-database. query(insertCommand, [description, status], (error) => {
-if (error) {
-console. log(error)
-} else {
-response. status (201).json({
-message: "Tarefa criada com sucesso!"
-})
-}
-})
-})
-
-app.delete("/delete-task/:id", (request, response) => {
-    const {id} = request.params
-    
-    const deleteCommand = "DELETE FROM ToDo_RaphaelBrandao WHERE id=?"
-
-    database.query(deleteCommand, [id],  (error) => {
-        if(error) {
-            console.log(error)
-         } else {
-            response.json({
-                message: "Tarefa apagada com sucesso!"   
-            })
-         }
-    })
-})
-
-
-app.listen(3333, () => {
-    console.log("Servidor online")
-})
+app.use(express.json());
 
 const database = mysql2.createPool({
     host: "benserverplex.ddns.net",
-    user: "aluno_projetos",
-    password: "aluno@projeto",
-    database: "todo_03mc"
-})
+    user: "alunos",
+    password: "senhaAlunos",
+    database: "alunos_filmes03MB"
+});
+
+app.get("/", (request, response) => {
+    response.json({
+        message: "API de Filmes funcionando!"
+    });
+});
+
+app.post("/create-film", (request, response) => {
+
+    const { titulo, genero, duracao, classificacao } = request.body;
+
+    const insertCommand = `
+        INSERT INTO filmes_RaphaelBrandao
+        (titulo, genero, duracao, classificacao)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    database.query(
+        insertCommand,
+        [titulo, genero, duracao, classificacao],
+        (error) => {
+
+            if (error) {
+                console.log(error);
+                response.status(500).json({
+                    message: "Erro ao cadastrar filme."
+                });
+            } else {
+                response.status(201).json({
+                    message: "Filme cadastrado com sucesso!"
+                });
+            }
+
+        }
+    );
+
+});
+
+app.get("/films", (request, response) => {
+
+    const selectCommand = "SELECT * FROM filmes_RaphaelBrandao";
+
+    database.query(selectCommand, (error, result) => {
+
+        if (error) {
+            console.log(error);
+            response.status(500).json({
+                message: "Erro ao buscar filmes."
+            });
+        } else {
+            response.json(result);
+        }
+
+    });
+
+});
+
+app.get("/films/:id", (request, response) => {
+
+    const { id } = request.params;
+
+    const selectCommand = "SELECT * FROM filmes_RaphaelBrandao WHERE id=?";
+
+    database.query(selectCommand, [id], (error, result) => {
+
+        if (error) {
+            console.log(error);
+            response.status(500).json({
+                message: "Erro ao buscar filme."
+            });
+        } else {
+            response.json(result);
+        }
+
+    });
+
+});
+
+app.put("/update-film/:id", (request, response) => {
+
+    const { id } = request.params;
+
+    const { titulo, genero, duracao, classificacao } = request.body;
+
+    const updateCommand = `
+        UPDATE filmes_RaphaelBrandao
+        SET
+        titulo=?,
+        genero=?,
+        duracao=?,
+        classificacao=?
+        WHERE id=?
+    `;
+
+    database.query(
+        updateCommand,
+        [titulo, genero, duracao, classificacao, id],
+        (error) => {
+
+            if (error) {
+                console.log(error);
+                response.status(500).json({
+                    message: "Erro ao atualizar filme."
+                });
+            } else {
+                response.json({
+                    message: "Filme atualizado com sucesso!"
+                });
+            }
+
+        }
+    );
+
+});
+
+app.delete("/delete-film/:id", (request, response) => {
+
+    const { id } = request.params;
+
+    const deleteCommand = "DELETE FROM filmes_RaphaelBrandao WHERE id=?";
+
+    database.query(deleteCommand, [id], (error) => {
+
+        if (error) {
+            console.log(error);
+            response.status(500).json({
+                message: "Erro ao apagar filme."
+            });
+        } else {
+            response.json({
+                message: "Filme apagado com sucesso!"
+            });
+        }
+
+    });
+
+});
+
+app.listen(3333, () => {
+    console.log("Servidor online!");
+});

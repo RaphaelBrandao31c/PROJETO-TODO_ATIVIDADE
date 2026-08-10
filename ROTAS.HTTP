@@ -1,13 +1,37 @@
 GET http://localhost:3333/
 
 ###
-POST http://localhost:3333/create-task
-Content-type: application/json
+
+GET http://localhost:3333/films
+
+###
+
+GET http://localhost:3333/films/1
+
+###
+
+POST http://localhost:3333/create-film
+Content-Type: application/json
 
 {
-    "description": "Segunda tarefa",
-    "status":0
+    "titulo": "Avatar",
+    "genero": "Ficção Científica",
+    "duracao": 162,
+    "classificacao": "12"
 }
 
 ###
-DELETE http://localhost:3333/delete-task/3
+
+PUT http://localhost:3333/update-film/1
+Content-Type: application/json
+
+{
+    "titulo": "Avatar 2",
+    "genero": "Ficção Científica",
+    "duracao": 192,
+    "classificacao": "14"
+}
+
+
+###
+DELETE http://localhost:3333/delete-film/1
